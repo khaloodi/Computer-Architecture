@@ -7,10 +7,18 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        self.PC = 0
-        self.RAM = [0] * 256
-        self.FL = 0
+        self.pc = 0
+        self.ram = [0] * 256
+        self.fl = 0
+        self.reg = [0] * 7
 
+    def ram_read(self, mar):
+        # is reading printing or returning?
+        return self.ram[mar]
+
+    def ram_write(self, mdr, val):
+        self.ram[mdr] = val
+        print(f"PC wrote {val} to ram at location {mdr}")
 
     def load(self):
         """Load a program into memory."""
@@ -65,4 +73,7 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+        IR = self.ram[self.pc]
+        operand_a = self.ram_read(self.pc + 1) # lol, this is worst way to do it fix
+        operand_b = self.ram_read(self.pc + 2) # lol, this is worst way to do it fix
         pass
