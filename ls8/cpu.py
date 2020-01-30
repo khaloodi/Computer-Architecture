@@ -74,6 +74,16 @@ class CPU:
     def run(self):
         """Run the CPU."""
         IR = self.ram[self.pc]
-        operand_a = self.ram_read(self.pc + 1) # lol, this is worst way to do it fix
-        operand_b = self.ram_read(self.pc + 2) # lol, this is worst way to do it fix
-        pass
+        # operand_a = self.ram_read(self.pc + 1) # lol, this is worst way to do it fix
+        # operand_b = self.ram_read(self.pc + 2) # lol, this is worst way to do it fix  
+
+        var = True
+
+        while var:
+            if IR == '00000001':
+                var = False
+            else:
+                print(f'Unknown instruction: {IR}')
+                sys.exit(1)
+
+    
