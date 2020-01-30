@@ -7,10 +7,53 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
+        self.ram = {}
+        self.registers = [0] * 8
+        self.registers[SP] = 0xf4
         self.pc = 0
-        self.ram = [0] * 256
-        self.fl = 0
-        self.reg = [0] * 7
+        self.running = True
+
+        self.branchtable = {}
+
+        # ALU OPERATIONS
+        self.branchtable[ADD] = self.handle_op_ADD
+        self.branchtable[SUB] = self.handle_op_SUB
+        self.branchtable[MUL] = self.handle_op_MUL
+        self.branchtable[DIV] = self.handle_op_DIV
+        self.branchtable[MOD] = self.handle_op_MOD
+        self.branchtable[INC] = self.handle_op_INC
+        self.branchtable[DEC] = self.handle_op_DEC
+        self.branchtable[CMP] = self.handle_op_CMP
+        self.branchtable[AND] = self.handle_op_AND
+        self.branchtable[NOT] = self.handle_op_NOT
+        self.branchtable[OR] = self.handle_op_OR
+        self.branchtable[XOR] = self.handle_op_XOR
+        self.branchtable[SHL] = self.handle_op_SHL
+        self.branchtable[SHR] = self.handle_op_SHR
+
+        # PC MUTATORS
+        self.branchtable[CALL] = self.handle_op_CALL
+        self.branchtable[RET] = self.handle_op_RET
+        self.branchtable[INT] = self.handle_op_INT
+        self.branchtable[IRET] = self.handle_op_IRET
+        self.branchtable[JMP] = self.handle_op_JMP
+        self.branchtable[JEQ] = self.handle_op_JEQ
+        self.branchtable[JNE] = self.handle_op_JNE
+        self.branchtable[JGT] = self.handle_op_JGT
+        self.branchtable[JLT] = self.handle_op_JLT
+        self.branchtable[JLE] = self.handle_op_JLE
+        self.branchtable[JGE] = self.handle_op_JGE
+
+        # OTHER CODES
+        self.branchtable[NOP] = self.handle_op_NOP
+        self.branchtable[HLT] = self.handle_op_HLT
+        self.branchtable[LDI] = self.handle_op_LDI
+        self.branchtable[LD] = self.handle_op_LD
+        self.branchtable[ST] = self.handle_op_ST
+        self.branchtable[PUSH] = self.handle_op_PUSH
+        self.branchtable[POP] = self.handle_op_POP
+        self.branchtable[PRN] = self.handle_op_PRN
+        self.branchtable[PRA] = self.handle_op_PRA
 
     def ram_read(self, mar):
         # is reading printing or returning?
