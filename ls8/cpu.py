@@ -1,6 +1,59 @@
-"""CPU functionality."""
-
 import sys
+
+# ALU OPERATIONS
+ADD = 0b10100000  # Takes 2 parameters : 00000aaa 00000bbb
+SUB = 0b10100001  # Takes 2 parameters : 00000aaa 00000bbb
+MUL = 0b10100010  # Takes 2 parameters : 00000aaa 00000bbb
+DIV = 0b10100011  # Takes 2 parameters : 00000aaa 00000bbb
+MOD = 0b10100100  # Takes 2 parameters : 00000aaa 00000bbb
+INC = 0b01100101  # Takes 1 parameters : 00000rrr
+DEC = 0b01100110  # Takes 1 parameters : 00000rrr
+CMP = 0b10100111  # Takes 2 parameters : 00000aaa 00000bbb
+AND = 0b10101000  # Takes 2 parameters : 00000aaa 00000bbb
+NOT = 0b01101001  # Takes 1 parameters : 00000rrr
+OR = 0b10101010  # Takes 2 parameters : 00000aaa 00000bbb
+XOR = 0b10101011  # Takes 2 parameters : 00000aaa 00000bbb
+SHL = 0b10101100  # Takes 2 parameters : 00000aaa 00000bbb
+SHR = 0b10101101  # Takes 2 parameters : 00000aaa 00000bbb
+
+# PC MUTATORS
+CALL = 0b01010000  # Takes 1 parameter : 00000rrr
+RET = 0b00010001  # Takes 0 parameters
+INT = 0b01010010  # Takes 1 parameter : 00000rrr
+IRET = 0b00010011  # Takes 0 parameters
+JMP = 0b01010100  # Takes 1 parameter : 00000rrr
+JEQ = 0b01010101  # Takes 1 parameter : 00000rrr
+JNE = 0b01010110  # Takes 1 parameter : 00000rrr
+JGT = 0b01010111  # Takes 1 parameter : 00000rrr
+JLT = 0b01011000  # Takes 1 parameter : 00000rrr
+JLE = 0b01011001  # Takes 1 parameter : 00000rrr
+JGE = 0b01011010  # Takes 1 parameter : 00000rrr
+
+
+# OTHER PROGRAMS
+
+NOP = 0b00000000  # Takes no parameters
+HLT = 0b00000001  # Takes no parameters
+
+# LDI Register Immediate
+# Set the value of a register to an integer.
+# Parameter 1: Register #
+# Parameter 2: Value to store in register
+LDI = 0b10000010  # Takes 2 parameters
+
+LD = 0b10000011  # Takes 2 parameters
+ST = 0b10000100  # Takes 2 parameters
+
+PUSH = 0b01000101  # Takes 1 parameter
+POP = 0b01000110  # Takes 1 parameter
+
+# Print
+# Print numeric value stored in the given register.
+PRN = 0b01000111  # Takes 1 parameter
+PRA = 0b01001000  # Takes 1 parameter
+
+
+SP = 7
 
 class CPU:
     """Main CPU class."""
@@ -55,44 +108,194 @@ class CPU:
         self.branchtable[PRN] = self.handle_op_PRN
         self.branchtable[PRA] = self.handle_op_PRA
 
-    def ram_read(self, mar):
-        # is reading printing or returning?
-        return self.ram[mar]
+    def handle_op_ADD(self, number_of_arguments):
+        register_a = self.ram_read(self.pc + 1)
+        register_b = self.ram_read(self.pc + 2)
+        self.alu("ADD", register_a, register_b)
+        self.pc += number_of_arguments
 
-    def ram_write(self, mdr, val):
-        self.ram[mdr] = val
-        print(f"PC wrote {val} to ram at location {mdr}")
+    def handle_op_SUB(self, number_of_arguments):
+        register_a = self.ram_read(self.pc + 1)
+        register_b = self.ram_read(self.pc + 2)
+        self.alu("SUB", register_a, register_b)
+        self.pc += number_of_arguments
+
+    def handle_op_MUL(self, number_of_arguments):
+        register_a = self.ram_read(self.pc + 1)
+        register_b = self.ram_read(self.pc + 2)
+        self.alu("MUL", register_a, register_b)
+        self.pc += number_of_arguments
+
+    def handle_op_DIV(self, number_of_arguments):
+        register_a = self.ram_read(self.pc + 1)
+        register_b = self.ram_read(self.pc + 2)
+        self.alu("DIV", register_a, register_b)
+        self.pc += number_of_arguments
+
+    def handle_op_MOD(self):
+        pass
+
+    def handle_op_INC(self):
+        pass
+
+    def handle_op_DEC(self):
+        pass
+
+    def handle_op_CMP(self):
+        pass
+
+    def handle_op_AND(self):
+        pass
+
+    def handle_op_NOT(self):
+        pass
+
+    def handle_op_OR(self):
+        pass
+
+    def handle_op_XOR(self):
+        pass
+
+    def handle_op_SHL(self):
+        pass
+
+    def handle_op_SHR(self):
+        pass
+
+    # FILL THIS OUT
+    def handle_op_CALL(self, number_of_arguments):
+        # Push return address to stack
+        # Set PC to the value in the register
+        return_address = self.pc + 2
+        self.push_to_stack(return_address)
+        register_number = self.ram_read(self.pc + 1)
+        self.pc = self.registers[register_number]
+
+    # FILL THIS OUT
+    def handle_op_RET(self, number_of_arguments):
+        # Pop the return address off the stack
+        # Store it in the PC
+        self.pc = self.pop_from_stack()
+
+    def handle_op_INT(self):
+        pass
+
+    def handle_op_IRET(self):
+        pass
+
+    def handle_op_JMP(self):
+        pass
+
+    def handle_op_JEQ(self):
+        pass
+
+    def handle_op_JNE(self):
+        pass
+
+    def handle_op_JGT(self):
+        pass
+
+    def handle_op_JLT(self):
+        pass
+
+    def handle_op_JLE(self):
+        pass
+
+    def handle_op_JGE(self):
+        pass
+
+    def handle_op_NOP(self):
+        pass
+
+    def handle_op_HLT(self, number_of_arguments):
+        self.running = False
+
+    def handle_op_LDI(self, number_of_arguments):
+        register_number = self.ram_read(self.pc + 1)
+        number_to_save = self.ram_read(self.pc + 2)
+        self.registers[register_number] = number_to_save
+        self.pc += number_of_arguments
+
+    def handle_op_LD(self):
+        pass
+
+    def handle_op_ST(self):
+        pass
+
+    def handle_op_PUSH(self, number_of_arguments):
+        # Copy value from self.ram[register_number] to memory at SP
+        register_number = self.ram_read(self.pc + 1)
+        number_to_push = self.registers[register_number]
+        self.push_to_stack(number_to_push)
+        self.pc += number_of_arguments
+
+    def handle_op_POP(self, number_of_arguments):
+        # Copy value from the top of the stack into given register_number
+        register_number = self.ram_read(self.pc + 1)
+        self.registers[register_number] = self.pop_from_stack()
+        self.pc += number_of_arguments
+
+    def handle_op_PRN(self, number_of_arguments):
+        register_number = self.ram_read(self.pc + 1)
+        number_to_print = self.registers[register_number]
+        print(number_to_print)
+        self.pc += number_of_arguments
+
+    def handle_op_PRA(self):
+        pass
+
+    def push_to_stack(self, item):
+        # Decrement Stack Pointer (SP)
+        self.registers[SP] -= 1
+        self.ram_write(self.registers[SP], item)
+
+    def pop_from_stack(self):
+        number_to_pop = self.ram_read(self.registers[SP])
+        self.registers[SP] += 1
+        return number_to_pop
 
     def load(self):
         """Load a program into memory."""
+        filename = sys.argv[1]
 
         address = 0
 
-        # For now, we've just hardcoded a program:
+        # Read the file
+        with open(filename) as f:
+            for line in f:
+                n = line.split("#")
+                n[0] = n[0].strip()
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+                if n[0] is "":
+                    continue
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+                instruction = int(n[0], 2)
+                self.ram_write(address, instruction)
+                address += 1
 
+    def ram_read(self, address):
+        return self.ram[address]
+
+    def ram_write(self, address, value):
+        self.ram[address] = value
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
-        if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+        if op is "ADD":
+            self.registers[reg_a] += self.registers[reg_b]
+
+        elif op is "SUB":
+            self.registers[reg_a] -= self.registers[reg_b]
+
+        elif op is "MUL":
+            self.registers[reg_a] *= self.registers[reg_b]
+
+        elif op is "DIV":
+            self.registers[reg_a] /= self.registers[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
+
 
     def trace(self):
         """
@@ -110,23 +313,19 @@ class CPU:
         ), end='')
 
         for i in range(8):
-            print(" %02X" % self.reg[i], end='')
-
-        print()
+            # print(" %d(02X)" % (self.registers[i]]), end='')
+            print(f"{self.registers[i]}", end='')
 
     def run(self):
         """Run the CPU."""
-        IR = self.ram[self.pc]
-        # operand_a = self.ram_read(self.pc + 1) # lol, this is worst way to do it fix
-        # operand_b = self.ram_read(self.pc + 2) # lol, this is worst way to do it fix  
+        
+        while self.running:
+            instruction = self.ram_read(self.pc)
+            number_of_arguments = ((instruction & 0b11000000) >> 6) + 1
 
-        var = True
+            if instruction in self.branchtable:
+                self.branchtable[instruction](number_of_arguments)
 
-        while var:
-            if IR == '00000001':
-                var = False
             else:
-                print(f'Unknown instruction: {IR}')
+                print(f"Unknown instruction at index {self.pc}")
                 sys.exit(1)
-
-    
